@@ -468,12 +468,6 @@ const cssSelectorBuilder = {
   },
 };
 
-console.log(cssSelectorBuilder
-  .element('div')
-  .class('container')
-  .class('clickable')
-  .stringify());
-
 module.exports = {
   shallowCopy,
   mergeObjects,
