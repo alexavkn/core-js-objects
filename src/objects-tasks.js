@@ -392,34 +392,87 @@ function group(array, keySelector, valueSelector) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  answer: '',
+
+  element(value) {
+    this.error(1);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 1;
+    obj.answer = this.answer.concat(value);
+    return obj;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    this.error(2);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 2;
+    obj.answer = this.answer.concat('#').concat(value);
+    return obj;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    this.error(3);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 3;
+    obj.answer = this.answer.concat('.').concat(value);
+    return obj;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    this.error(4);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 4;
+    obj.answer = this.answer.concat('[').concat(value).concat(']');
+    return obj;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    this.error(5);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 5;
+    obj.answer = this.answer.concat(':').concat(value);
+    return obj;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    this.error(6);
+    const obj = Object.create(cssSelectorBuilder);
+    obj.code = 6;
+    obj.answer = this.answer.concat('::').concat(value);
+    return obj;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const obj = Object.create(cssSelectorBuilder);
+    obj.answer = selector1.answer
+      .concat(' ')
+      .concat(combinator)
+      .concat(' ')
+      .concat(selector2.answer);
+    return obj;
+  },
+
+  stringify() {
+    return this.answer;
+  },
+
+  error(code) {
+    if (this.code > code)
+      throw new Error(
+        'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element'
+      );
+    if (this.code === code && (code === 1 || code === 2 || code === 6))
+      throw new Error(
+        'Element, id and pseudo-element should not occur more then one time inside the selector'
+      );
   },
 };
+
+console.log(cssSelectorBuilder
+  .element('div')
+  .class('container')
+  .class('clickable')
+  .stringify());
 
 module.exports = {
   shallowCopy,
